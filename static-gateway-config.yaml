@@ -1,0 +1,11 @@
+apiVersion: egressgateway.kubernetes.azure.com/v1alpha1
+kind: StaticGatewayConfiguration
+metadata:
+  name: gateway-config
+  namespace: default
+spec:
+  gatewayNodepoolName: gateway
+  excludeCidrs:
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 169.254.169.254/32
