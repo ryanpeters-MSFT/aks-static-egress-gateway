@@ -1,5 +1,5 @@
-$group       = "rg-static-egress"
-$cluster     = "staticegress"
+$group       = "rg-aks-static-egress"
+$cluster     = "staticegresscluster"
 $location    = "eastus2"
 $gatewayPool = "gateway"
 $prefixSize  = 31
