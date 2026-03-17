@@ -6,14 +6,14 @@ This repository demonstrates a minimal Azure Kubernetes Service (AKS) setup usin
 
 - `setup.ps1`: Provisions AKS, creates a gateway node pool, applies Kubernetes manifests, and validates outbound IP.
 - `static-gateway-config.yaml`: Defines a `StaticGatewayConfiguration` named `gateway-config` in `default` namespace.
-- `egress-sample-deployment.yaml`: Deploys a sample pod annotated to use `gateway-config`.
+- `curl.yaml`: Defines a sample pod named `curl` annotated to use `gateway-config`.
 
 ## What This Demo Deploys
 
 1. A resource group and AKS cluster with Static Egress Gateway enabled.
 2. A dedicated gateway node pool (`gateway`) in `gateway` mode.
 3. A `StaticGatewayConfiguration` custom resource bound to that gateway node pool.
-4. A sample deployment (`egress-sample`) that routes outbound traffic through the gateway.
+4. A sample pod (`curl`) that routes outbound traffic through the gateway.
 
 ## Quick Start
 
@@ -54,14 +54,26 @@ Check gateway configuration status:
 kubectl describe StaticGatewayConfiguration gateway-config -n default
 ```
 
-Get sample pod and verify egress IP:
+Get the sample pod and verify egress IP:
 
 ```powershell
-$pod = kubectl get pod -l app=egress-sample -o jsonpath="{.items[0].metadata.name}"
-kubectl exec $pod -- curl -s https://ifconfig.me
+kubectl exec curl -- curl -s https://ifconfig.me
 ```
 
 The returned IP should match the egress IP/prefix shown on the gateway configuration status.
+
+### Commands
+
+```powershell
+# retrieve the egress IP CIDR for gateway-config
+kubectl get staticgatewayconfiguration gateway-config -o jsonpath='{.status.egressIpPrefix}'
+```
+
+### Destination CIDR Routing
+
+If a destination matches `spec.excludeCidrs` on the `StaticGatewayConfiguration`, traffic to that CIDR bypasses the Static Egress Gateway and uses the cluster's normal outbound routing instead.
+
+In this demo, the private ranges `10.0.0.0/8` and `172.16.0.0/12`, plus `169.254.169.254/32`, are excluded so they don't use the gateway's static egress IPs.
 
 ## Notes and Limitations
 
