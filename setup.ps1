@@ -25,13 +25,3 @@ az aks nodepool add --cluster-name $cluster -g $group `
 
 # apply the static gateway configuration
 kubectl apply -f .\static-gateway-config.yaml
-
-# deploy a sample workload annotated to use the gateway
-kubectl apply -f .\egress-sample-deployment.yaml
-
-# verify the gateway configuration status
-kubectl describe StaticGatewayConfiguration gateway-config -n default
-
-# verify egress ip from the sample pod
-$pod = kubectl get pod -l app=egress-sample -o jsonpath="{.items[0].metadata.name}"
-kubectl exec $pod -- curl -s https://ifconfig.me

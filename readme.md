@@ -20,7 +20,11 @@ This repository demonstrates a minimal Azure Kubernetes Service (AKS) setup usin
 From the repo root, run:
 
 ```powershell
+# deploy AKS cluster with static gateway enabled
 ./setup.ps1
+
+# deploy curl test pod
+kubectl apply -f .\curl.yaml
 ```
 
 ## Flag Details
@@ -51,22 +55,14 @@ This sets the **public IP prefix size** allocated for the gateway node pool.
 Check gateway configuration status:
 
 ```powershell
+# verify the gateway configuration status
 kubectl describe StaticGatewayConfiguration gateway-config -n default
-```
 
-Get the sample pod and verify egress IP:
-
-```powershell
-kubectl exec curl -- curl -s https://ifconfig.me
-```
-
-The returned IP should match the egress IP/prefix shown on the gateway configuration status.
-
-### Commands
-
-```powershell
 # retrieve the egress IP CIDR for gateway-config
 kubectl get staticgatewayconfiguration gateway-config -o jsonpath='{.status.egressIpPrefix}'
+
+# should return the IP of the static egress gateway
+kubectl exec -it curl -- curl https://api.ipify.org
 ```
 
 ### Destination CIDR Routing
@@ -74,6 +70,11 @@ kubectl get staticgatewayconfiguration gateway-config -o jsonpath='{.status.egre
 If a destination matches `spec.excludeCidrs` on the `StaticGatewayConfiguration`, traffic to that CIDR bypasses the Static Egress Gateway and uses the cluster's normal outbound routing instead.
 
 In this demo, the private ranges `10.0.0.0/8` and `172.16.0.0/12`, plus `169.254.169.254/32`, are excluded so they don't use the gateway's static egress IPs.
+
+```powershell
+# should return the IP of the default load balancer
+kubectl exec -it curl -- curl https://ifconfig.me
+```
 
 ## Notes and Limitations
 
