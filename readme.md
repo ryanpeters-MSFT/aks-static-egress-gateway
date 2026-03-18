@@ -71,6 +71,8 @@ If a destination matches `spec.excludeCidrs` on the `StaticGatewayConfiguration`
 
 In this demo, the private ranges `10.0.0.0/8` and `172.16.0.0/12`, plus `169.254.169.254/32`, are excluded so they don't use the gateway's static egress IPs.
 
+In this example, the website [ifconfig.me](https://ifconfig.me) has a IP of 34.160.111.0/24. If this is excluded in `StaticGatewayConfiguration.spec.excludeCidrs` it will bypass the egress gateway IP. 
+
 ```powershell
 # should return the IP of the default load balancer
 kubectl exec -it curl -- curl https://ifconfig.me
