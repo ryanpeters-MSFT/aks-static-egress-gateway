@@ -1,9 +1,9 @@
-$group       = "rg-aks-static-egress"
-$cluster     = "staticegresscluster"
-$location    = "eastus2"
+$group = "rg-aks-static-egress"
+$cluster = "staticegresscluster"
+$location = "eastus2"
 $gatewayPool = "gateway"
-$prefixSize  = 31
-$nodeCount   = 2
+$prefixSize = 31
+$nodeCount = 2
 
 # create resource group
 az group create -n $group -l $location

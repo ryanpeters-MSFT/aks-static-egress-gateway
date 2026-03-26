@@ -1,0 +1,8 @@
+apiVersion: egressgateway.kubernetes.azure.com/v1alpha1
+kind: StaticGatewayConfiguration
+metadata:
+  name: gateway-config-private
+  namespace: default
+spec:
+  gatewayNodepoolName: gateway
+  provisionPublicIps: false
